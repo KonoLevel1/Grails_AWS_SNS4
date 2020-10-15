@@ -64,6 +64,16 @@ $ grails run-app
 4. 開発証明書を選択し「Continue」
 5. 端末を選択し「Continue」
 6. 任意のプロビジョニングプロファイルネームを入力し「Generate」し「Download」
+#### Cognitoの設定
+1. AWS公式サイトにサインイン後「Cognito」でサービスを検索する
+    * 「SimpleNotificationService」は通知を行うサービスです
+2. IDプールの管理をクリック
+3. 新しいIDプールの作成をクリック
+4. 「IDプール名」に任意の文字列を入力する
+5. 「認証されていないIDに対してアクセスを有効にする」をチェック
+6. 「プールの作成」をクリック
+7. 「詳細を表示」をクリックしロール名を確認して（基本的に変更不要）「許可」
+8. 「プラットフォーム」に iOS - Swiftを設定して
 ## 機能
 ### Grails側
 * 通知を送信
@@ -88,6 +98,9 @@ $ grails run-app
     * 初心者（若葉）マークの画像を使用させていただきました。
 * [Takahiro Octopress Blog](https://grandbig.github.io/blog/2019/09/28/ios-devicetoken-2/)
     * Swiftでのデバイストークン取得のコードを参考にさせていただきました。
+* [[Swift]AWS SNSでiOSにPush通知する
+](https://qiita.com/Necorin/items/689053f3a1ae576ff71a)
+    * Swiftでデバイストークン登録のコードを参考にさせていただきました。
 ## 備考
 ### アプリを実行した時に、下記のようなエラーが発生する
 ```

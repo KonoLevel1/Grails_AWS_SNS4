@@ -112,7 +112,7 @@ environments:
         # 通知により送信されるメッセージ １３文字以上は設定しないでください。
         message: 'デフォルトメッセージ'
         # 通知を行うトピック
-        topicArn: "arn:aws:sns:ap-northeast-1:156207684339:PushTest"
+        topicArn: "ここに、AWS Simple Notification Service の トピックARNを設定してください"
     test:
         dataSource:
             dbCreate: update

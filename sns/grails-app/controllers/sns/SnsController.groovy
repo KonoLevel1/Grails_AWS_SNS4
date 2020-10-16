@@ -31,7 +31,7 @@ class SnsController {
             def response = snsService.sendMessage(params.message, topicArn, params.sound1, params.badge1)
             flash.message = response
         }else{
-            flash.message = "メッセージ内容が不正です。詳細は操作タブよりHELPをご覧ください。" + params.sound1 + params.badge1 + "x"
+            flash.message = "メッセージ内容が不正です。詳細は操作タブよりHELPをご覧ください。"
         }
         redirect(controller: "sns", action: "index")
     }

@@ -51,46 +51,88 @@ $ grails run-app
     * 通知音とバッジはメール送信では使用できません
 11. メールが届けば成功
 ### プッシュ通知を行えるようにする 
-#### CSRファイルの生成
+#### **CSRファイルの生成**
 1. キーチェーンアクセスを開き、画面上「キーチェーンアクセス > 証明書アシスタント > 認証局に証明書を要求」
+
 2. 「ユーザーのメールアドレス」を入力、「通称」はそのまま、「ディスクに保存」を選択、「鍵ペア情報を指定」にチェック
 3. 「鍵のサイズ」は2048ビット、アルゴリズムは「RSA」で続ける
-#### 開発用証明書の生成
+#### **開発用証明書の生成**
 1. https://developer.apple.com/account/ にアクセスして、「Certificates, Identifiers & Profiles」をクリック
+
 2. 「Certificates」横の青いプラスボタンをクリック
 3. 「iOS App Development」を選択し、画面右上より「Continue」
 4. 「Choose File」より先程生成した「CertificateSigningRequest.certSigningRequest」を選択し「Continue」
 5. 「開発者証明書」を「Download」する
-#### AppIDの生成（AppleIDではないので注意）
+#### **AppIDの生成（AppleIDではないので注意）**
 1. https://developer.apple.com/account/ にアクセスして、「Certificates, Identifiers & Profiles」をクリック
+
 2. 「Identifiers」をクリックして「Identifiers」横の青いプラスボタンをクリック
 3. 「App IDs」を選択し「Continue」
 4. 「App」を選択し「Continue」
 5. 「Description」にアプリの説明を入力、「Bundle ID」は「Explicit」を選択し任意のIDを入力する
     * Bundle ID は、他のアプリと被っていたら使用できないので、被らないものを入力する必要がある
 6. 「Capabilities」より「Push Notifications」を選択し、画面右上より「Continue」「Register」
-#### デバイスの登録
+#### **デバイスの登録**
 1. 画面左より「Devices」をクリックして「Devices」横の青いプラスボタンをクリック
+
 2. 「Platform」に iOS,tvOS,watchOS を選択、「Device Name」に任意の名前
 3. iPhoneなどの端末をMacに接続した状態で、Xcodeを開き、画面上より「Window > Devices and Simulators」
 4. Identifierの文字列をコピーして、「Device ID（UDID）」に入力して「Continue」
-#### プロビジョニングプロファイルの生成
+#### **プロビジョニングプロファイルの生成**
 1. 画面左より「Profiles」をクリックして「Profiles」横の青いプラスボタンをクリック
+
 2. 「iOS App Development」を選択し「Continue」
 3. 「App ID」は先程作ったものを選択し「Continue」
 4. 開発証明書を選択し「Continue」
 5. 端末を選択し「Continue」
 6. 任意のプロビジョニングプロファイルネームを入力し「Generate」し「Download」
-#### Cognitoの設定
+#### **Cognitoの設定**
 1. AWS公式サイトにサインイン後「Cognito」でサービスを検索する
     * 「SimpleNotificationService」は通知を行うサービスです
+
 2. IDプールの管理をクリック
 3. 新しいIDプールの作成をクリック
 4. 「IDプール名」に任意の文字列を入力する
 5. 「認証されていないIDに対してアクセスを有効にする」をチェック
 6. 「プールの作成」をクリック
 7. 「詳細を表示」をクリックしロール名を確認して（基本的に変更不要）「許可」
-8. 「プラットフォーム」に iOS - Swiftを設定して
+8. AWS認証情報の取得欄に表示されている「IDプールのID」を控える
+#### **IAMの設定**
+1. AWS公式サイトにサインイン後「IAM」でサービスを検索する
+
+2. アクセス管理のロールをクリック
+3. 検索欄に先程確認したロール名を途中まで入力する
+4. ○○Unauth_Roleをクリックして詳細を開く
+5. 「ポリシーをアタッチします」のボタンをクリックして「SNS」と検索
+6. 「AmazonSNSFullAccess」にチェックを入れる
+7. ポリシーのアタッチをクリック
+#### **iOSアプリの設定**
+1. クローンしたファイル「Grails_AWS_SNS4 > PushNotificationApp」をXcodeで開く
+
+2. 「PushNotificationApp > General」を開く
+    * 「Bundle Identifier」にBundle IDを入力する
+4. 「PushNotificationApp > PushNotificationApp > AppDelegate.swift」を開く
+    * 59行目にIDプールIDを設定します。
+    * 68行目にプラットフォームアプリケーションのARNを設定します。
+    * 77行目にトピックのARNを設定します。
+#### **WEBアプリ（Grails）の設定を行う**
+1. クローンしたファイル「Grails_AWS_SNS4 > sns」をIDE（統合開発環境）で開く
+
+2. 「sns > grails-app[main] > conf > application.yml」を開く
+    * 115行目にトピックのARNを設定する
+## 動作確認
+1. Macに端末を接続し、XCodeで端末を選択しビルドボタンをクリック
+
+2. 通知を許可したあと、AWSのSNS設定ページを確認してトピックのサブスクリプションに１項目IDが追加されていることを確認する
+3. クローンした「Grails_AWS_SNS4 > sns」で下記コマンド実行
+```
+$ grails run-app
+```
+4. http://localhost:8080 にアクセス
+
+5. 「操作 > 通知を送信」より送信ボタンをクリック
+6. 通知が送信されれば成功
+    * 注意：端末でアプリの画面を開いていると通知が表示されません。
 ## 課題・問題
 * AWS-SNSの一部の機能しか使えてないので今後他の機能も使いこなす。
 ## 謝辞
